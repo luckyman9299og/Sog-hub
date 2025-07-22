@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Sog Hub</title>
   <style>
     body {
       margin: 0;
-      background: transparent;
-      font-family: "Fredoka One", "Comic Sans MS", sans-serif;
+      background: #00FF00; /* Chroma key green */
+      font-family: "Consolas", monospace;
       user-select: none;
     }
 
@@ -20,100 +20,100 @@
       z-index: 9999;
     }
 
+    #sogContainer {
+      background-color: #1e1e1e;
+      color: white;
+      width: 400px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px lime;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: scale(0.95);
+      pointer-events: none;
+    }
+
+    #sogContainer.open {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
     #sogHeader {
-      background-color: #1f1f1f;
-      padding: 10px 20px;
-      border-radius: 12px;
-      border: 2px solid #2b2b2b;
-      color: white;
-      font-size: 24px;
+      background-color: #111;
+      padding: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
       cursor: pointer;
-      box-shadow: 0 0 10px rgba(0, 255, 0, 0.4);
-      transition: all 0.2s ease;
+      color: lime;
     }
 
-    #sogPanel {
-      background-color: #2c2c2c;
-      border: 2px solid #2b2b2b;
-      border-radius: 0 0 12px 12px;
+    .panel-content {
       padding: 20px;
-      width: 360px;
-      box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
-      margin-top: 10px;
-      display: none;
-      animation: smoothIn 0.6s ease-out;
+      animation: fadeIn 0.4s ease;
     }
 
-    @keyframes smoothIn {
-      0% {
+    @keyframes fadeIn {
+      from {
         opacity: 0;
-        transform: scale(0.95) translateY(-20px);
+        transform: translateY(-10px);
       }
-      60% {
-        opacity: 0.8;
-        transform: scale(1.02) translateY(5px);
-      }
-      100% {
+      to {
         opacity: 1;
-        transform: scale(1) translateY(0);
+        transform: translateY(0);
       }
-    }
-
-    h3 {
-      color: white;
-      margin-bottom: 18px;
-      text-shadow: 1px 1px 3px black;
-    }
-
-    .button-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
     }
 
     .command {
-      background: #1f1f1f;
-      border-radius: 8px;
-      padding: 12px;
-      color: white;
-      font-weight: bold;
+      background: #2a2a2a;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
     }
 
     .select-button {
-      margin-top: 8px;
-      background: #00cc00;
+      background: lime;
       border: none;
-      border-radius: 6px;
-      color: white;
-      padding: 6px 14px;
-      cursor: pointer;
+      color: black;
       font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 5px;
+      margin-top: 8px;
+      cursor: pointer;
       box-shadow: 0 0 5px lime;
     }
 
     .select-button:hover {
-      background: #00ff00;
-      color: black;
+      background: white;
     }
 
-    .rec-buttons {
+    #terminal {
       margin-top: 20px;
-    }
-
-    .rec-buttons button {
-      background: #111;
-      color: white;
-      padding: 8px 12px;
-      margin: 0 5px;
+      background: #000;
       border: 1px solid lime;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: left;
     }
 
-    .rec-buttons button:hover {
-      background: lime;
-      color: black;
+    #terminalInput {
+      width: 100%;
+      background: #111;
+      border: none;
+      outline: none;
+      color: lime;
+      font-family: inherit;
+      padding: 6px;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+
+    #terminalOutput {
+      font-size: 13px;
+      color: white;
+      margin-top: 6px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -122,54 +122,39 @@
   <div class="center-wrap">
     <div id="sogHeader" onclick="toggleSog()">Sog Hub</div>
 
-    <div id="sogPanel">
-      <h3>Pick Sog</h3>
-      <div class="button-grid">
+    <div id="sogContainer">
+      <div class="panel-content">
         <div class="command">Sog 1 <div><button class="select-button">Select</button></div></div>
         <div class="command">Sog 2 <div><button class="select-button">Select</button></div></div>
         <div class="command">Sog 3 <div><button class="select-button">Select</button></div></div>
-      </div>
 
-      <!-- OPTIONAL: Recording Buttons -->
-      <div class="rec-buttons">
-        <button onclick="startRecording()">Start Rec</button>
-        <button onclick="stopRecording()">Stop Rec</button>
+        <div id="terminal">
+          <div><strong style="color: lime;">Terminal</strong></div>
+          <input id="terminalInput" type="text" placeholder="Type a command..." onkeydown="handleTerminal(event)">
+          <div id="terminalOutput"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const panel = document.getElementById("sogPanel");
-    let isOpen = false;
-    let recorder, chunks = [];
+    const sogContainer = document.getElementById("sogContainer");
+    const terminalInput = document.getElementById("terminalInput");
+    const terminalOutput = document.getElementById("terminalOutput");
 
     function toggleSog() {
-      isOpen = !isOpen;
-      panel.style.display = isOpen ? "block" : "none";
-      if (isOpen) {
-        panel.style.animation = "smoothIn 0.6s ease-out";
+      sogContainer.classList.toggle("open");
+    }
+
+    function handleTerminal(e) {
+      if (e.key === "Enter") {
+        const cmd = terminalInput.value.trim();
+        terminalInput.value = "";
+        if (cmd) {
+          terminalOutput.innerText += `> ${cmd}\nFake command executed.\n`;
+          terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
       }
-    }
-
-    // Optional recording feature (no transparency)
-    function startRecording() {
-      const stream = document.body.captureStream(30);
-      recorder = new MediaRecorder(stream, { mimeType: "video/webm" });
-      recorder.ondataavailable = e => chunks.push(e.data);
-      recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: "video/webm" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "soghub_recording.webm";
-        a.click();
-        chunks = [];
-      };
-      recorder.start();
-    }
-
-    function stopRecording() {
-      if (recorder) recorder.stop();
     }
   </script>
 
