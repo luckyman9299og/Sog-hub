@@ -5,56 +5,58 @@
   <title>Sog Hub</title>
   <style>
     body {
-      background: transparent;
       margin: 0;
       padding: 0;
-      font-family: "Comic Sans MS", sans-serif;
+      background: transparent;
+      font-family: "Fredoka One", "Comic Sans MS", sans-serif;
+      user-select: none;
     }
 
-    #sogHub {
+    .center-wrap {
       position: fixed;
-      top: 50px;
-      left: 50px;
-      background: #2c2c2c;
-      border-radius: 12px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 9999;
+    }
+
+    #sogHeader {
+      background-color: #1f1f1f;
+      padding: 10px 20px;
+      border-radius: 12px 12px 0 0;
+      border: 2px solid #2b2b2b;
+      border-bottom: none;
+      color: white;
+      font-size: 24px;
+      box-shadow: 0 0 10px rgba(0,255,0,0.4);
+    }
+
+    #sogPanel {
+      background-color: #2c2c2c;
+      border: 2px solid #2b2b2b;
+      border-radius: 0 0 12px 12px;
       padding: 20px;
-      box-shadow: 0 0 25px rgba(0, 255, 0, 0.5);
-      display: none;
-      animation: slideIn 0.5s ease-out forwards;
-      width: 300px;
+      width: 360px;
+      box-shadow: 0 0 20px rgba(0,255,0,0.3);
+      animation: slideIn 0.4s ease-out;
     }
 
     @keyframes slideIn {
       from {
-        transform: scale(0.8);
         opacity: 0;
+        transform: translateY(-10px);
       }
       to {
-        transform: scale(1);
         opacity: 1;
+        transform: translateY(0);
       }
     }
 
-    #toggleButton {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      background: #111;
-      border: 2px solid lime;
-      color: lime;
-      padding: 10px 20px;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 0 0 10px lime;
-    }
-
-    h2 {
+    h3 {
       color: white;
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 16px;
-      text-shadow: 1px 1px 4px black;
+      margin-bottom: 18px;
+      text-shadow: 1px 1px 3px black;
     }
 
     .button-grid {
@@ -64,60 +66,54 @@
     }
 
     .command {
-      background: #3a3a3a;
+      background: #1f1f1f;
       border-radius: 8px;
-      padding: 10px;
+      padding: 12px;
       color: white;
-      text-align: center;
       font-weight: bold;
-      position: relative;
     }
 
     .select-button {
-      background: #00cc00;
-      color: white;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 6px;
       margin-top: 8px;
+      background: #00cc00;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      padding: 6px 14px;
       cursor: pointer;
       font-weight: bold;
+      box-shadow: 0 0 5px lime;
     }
 
     .select-button:hover {
       background: #00ff00;
       color: black;
     }
+
   </style>
 </head>
 <body>
 
-  <div id="toggleButton" onclick="toggleSogHub()">Sog Hub</div>
-
-  <div id="sogHub">
-    <h2>Pick Sog</h2>
-    <div class="button-grid">
-      <div class="command">
-        Sog 1
-        <div><button class="select-button">Select</button></div>
-      </div>
-      <div class="command">
-        Sog 2
-        <div><button class="select-button">Select</button></div>
-      </div>
-      <div class="command">
-        Sog 3
-        <div><button class="select-button">Select</button></div>
+  <div class="center-wrap">
+    <div id="sogHeader">Sog Hub</div>
+    <div id="sogPanel">
+      <h3>Pick Sog</h3>
+      <div class="button-grid">
+        <div class="command">
+          Sog 1
+          <div><button class="select-button">Select</button></div>
+        </div>
+        <div class="command">
+          Sog 2
+          <div><button class="select-button">Select</button></div>
+        </div>
+        <div class="command">
+          Sog 3
+          <div><button class="select-button">Select</button></div>
+        </div>
       </div>
     </div>
   </div>
-
-  <script>
-    const sogHub = document.getElementById("sogHub");
-    function toggleSogHub() {
-      sogHub.style.display = sogHub.style.display === "block" ? "none" : "block";
-    }
-  </script>
 
 </body>
 </html>
