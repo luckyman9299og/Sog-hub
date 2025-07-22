@@ -4,149 +4,199 @@
   <meta charset="UTF-8" />
   <title>Sog Hub</title>
   <style>
-    * {
-      box-sizing: border-box;
-      font-family: monospace;
-    }
-
     body {
       margin: 0;
-      padding: 0;
-      background-color: black;
-      color: white;
-      overflow: hidden;
+      background: #00FF00; /* Green screen for chroma key */
+      font-family: "Consolas", monospace;
+      user-select: none;
     }
 
-    #toggleBtn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      background-color: black;
-      color: white;
-      border: 2px solid white;
-      padding: 10px 20px;
-      cursor: pointer;
-      transition: all 0.3s ease-in-out;
-    }
-
-    #sogUI {
-      position: absolute;
+    .center-wrap {
+      position: fixed;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
-      width: 400px;
-      background-color: black;
-      border: 2px solid white;
-      padding: 20px;
-      opacity: 0;
-      pointer-events: none;
-      transition: all 0.5s ease-in-out;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 9999;
     }
 
-    #sogUI.open {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1);
-      pointer-events: all;
-    }
-
-    .sogBtn {
-      background-color: black;
+    #sogContainer {
+      background-color: #1e1e1e;
       color: white;
-      border: 1px solid white;
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      cursor: pointer;
-      transition: background 0.2s ease-in-out;
-    }
-
-    .sogBtn:hover {
-      background-color: white;
-      color: black;
-    }
-
-    #commandArea {
-      margin-top: 15px;
-      border: 1px solid white;
-      padding: 10px;
-      text-align: center;
-    }
-
-    #commandInput {
-      width: 90%;
-      padding: 5px;
-      background-color: transparent;
-      border: none;
-      border-bottom: 1px solid white;
-      color: #00ff00;
-      text-align: center;
-      outline: none;
-    }
-
-    #statusMsg {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #00ff00;
-      font-size: 14px;
+      width: 420px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px white;
+      overflow: hidden;
+      transition: all 0.3s ease;
       opacity: 0;
-      transition: all 0.4s ease-in-out;
+      transform: scale(0.95);
+      pointer-events: none;
     }
 
-    #statusMsg img {
-      margin-left: 6px;
+    #sogContainer.open {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    #sogHeader {
+      background-color: #111;
+      padding: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+      cursor: pointer;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px white;
+    }
+
+    .panel-content {
+      padding: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .command {
+      background: #2a2a2a;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+    }
+
+    .select-button {
+      background: white;
+      border: none;
+      color: black;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 5px;
+      margin-top: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 5px white;
+    }
+
+    .select-button:hover {
+      background: #ddd;
+    }
+
+    #terminal {
+      margin-top: 24px;
+      background: #000;
+      border: 1px solid white;
+      padding: 14px;
+      border-radius: 6px;
+      text-align: center;
+    }
+
+    #terminalInput {
+      width: 90%;
+      background: #111;
+      border: none;
+      outline: none;
+      color: white;
+      font-family: inherit;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    #terminalOutput {
+      font-size: 13px;
+      color: white;
+      margin-top: 10px;
+      white-space: pre-wrap;
+      text-align: left;
+      background: #1b1b1b;
+      padding: 10px;
+      border-radius: 4px;
+    }
+
+    .output-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      opacity: 0;
+      animation: fadeSlideIn 0.6s ease-in-out forwards;
+    }
+
+    .output-line img {
       width: 18px;
       height: 18px;
-      transition: all 0.4s ease-in-out;
+      border-radius: 3px;
     }
 
-    #statusMsg.show {
-      opacity: 1;
-      transform: translateY(0);
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
   </style>
 </head>
 <body>
 
-  <button id="toggleBtn">Sog Hub</button>
+  <div class="center-wrap">
+    <div id="sogHeader" onclick="toggleSog()">Sog Hub</div>
 
-  <div id="sogUI">
-    <button class="sogBtn">Sog 1</button>
-    <button class="sogBtn">Sog 2</button>
-    <button class="sogBtn">Sog 3</button>
+    <div id="sogContainer">
+      <div class="panel-content">
+        <div class="command">Sog 1 <div><button class="select-button">Select</button></div></div>
+        <div class="command">Sog 2 <div><button class="select-button">Select</button></div></div>
+        <div class="command">Sog 3 <div><button class="select-button">Select</button></div></div>
 
-    <div id="commandArea">
-      <input type="text" id="commandInput" placeholder="Enter command..." />
-      <div id="statusMsg">
-        Command Successful
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" />
+        <div id="terminal">
+          <div><strong style="color: white;">Terminal</strong></div>
+          <input id="terminalInput" type="text" placeholder="Type a command..." onkeydown="handleTerminal(event)">
+          <div id="terminalOutput"></div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const toggleBtn = document.getElementById("toggleBtn");
-    const sogUI = document.getElementById("sogUI");
-    const commandInput = document.getElementById("commandInput");
-    const statusMsg = document.getElementById("statusMsg");
+    const sogContainer = document.getElementById("sogContainer");
+    const terminalInput = document.getElementById("terminalInput");
+    const terminalOutput = document.getElementById("terminalOutput");
 
-    let isOpen = false;
+    function toggleSog() {
+      sogContainer.classList.toggle("open");
+    }
 
-    toggleBtn.onclick = () => {
-      isOpen = !isOpen;
-      sogUI.classList.toggle("open", isOpen);
-    };
-
-    commandInput.addEventListener("keydown", (e) => {
+    function handleTerminal(e) {
       if (e.key === "Enter") {
-        statusMsg.classList.add("show");
-        setTimeout(() => {
-          statusMsg.classList.remove("show");
-        }, 2000);
-        commandInput.value = "";
+        const cmd = terminalInput.value.trim();
+        terminalInput.value = "";
+        if (cmd) {
+          const line = document.createElement("div");
+          line.className = "output-line";
+          line.innerHTML = `
+            <span>> ${cmd} — <b>Command Successful</b></span>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="Success Icon">
+          `;
+          terminalOutput.appendChild(line);
+          terminalOutput.scrollTop = terminalOutput.scrollHeight;
+        }
       }
-    });
+    }
   </script>
+
 </body>
 </html>
