@@ -1,201 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Sog Hub</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: #00FF00; /* Green screen for chroma key */
-      font-family: "Consolas", monospace;
-      user-select: none;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      height: 100%;
+      position: fixed;
+      font-family: monospace;
     }
 
-    .center-wrap {
-      position: fixed;
+    #toggleBtn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: limegreen;
+      color: black;
+      padding: 10px 20px;
+      border: 2px solid white;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: transform 0.2s ease;
+    }
+    #toggleBtn:hover {
+      transform: scale(1.05);
+    }
+
+    #sogUI {
+      position: absolute;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      z-index: 9999;
-    }
-
-    #sogContainer {
-      background-color: #1e1e1e;
-      color: white;
-      width: 420px;
+      width: 320px;
+      background: black;
+      border: 2px solid white;
       border-radius: 10px;
-      box-shadow: 0 0 20px white;
-      overflow: hidden;
-      transition: all 0.3s ease;
-      opacity: 0;
-      transform: scale(0.95);
-      pointer-events: none;
-    }
-
-    #sogContainer.open {
-      opacity: 1;
-      transform: scale(1);
-      pointer-events: auto;
-    }
-
-    #sogHeader {
-      background-color: #111;
-      padding: 12px;
-      font-size: 20px;
-      font-weight: bold;
-      border-bottom: 1px solid #333;
-      cursor: pointer;
-      color: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px white;
-    }
-
-    .panel-content {
       padding: 20px;
-      animation: fadeIn 0.4s ease;
+      box-shadow: 0 0 20px limegreen;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: all 0.4s ease;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #sogUI.show {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
     }
 
-    .command {
-      background: #2a2a2a;
+    .sogButton {
+      display: block;
+      width: 100%;
+      margin: 8px 0;
       padding: 10px;
-      margin-bottom: 12px;
-      border-radius: 6px;
-    }
-
-    .select-button {
-      background: white;
-      border: none;
+      background: limegreen;
       color: black;
+      border: none;
+      border-radius: 6px;
       font-weight: bold;
-      padding: 6px 12px;
-      border-radius: 5px;
-      margin-top: 8px;
       cursor: pointer;
-      box-shadow: 0 0 5px white;
+      transition: transform 0.2s ease;
     }
 
-    .select-button:hover {
-      background: #ddd;
+    .sogButton:hover {
+      transform: scale(1.05);
     }
 
     #terminal {
-      margin-top: 24px;
-      background: #000;
-      border: 1px solid white;
-      padding: 14px;
-      border-radius: 6px;
+      margin-top: 15px;
       text-align: center;
     }
 
     #terminalInput {
-      width: 90%;
-      background: #111;
-      border: none;
-      outline: none;
-      color: white;
-      font-family: inherit;
+      width: 80%;
       padding: 8px;
-      font-size: 14px;
+      border: 2px solid white;
       border-radius: 4px;
-      margin-top: 10px;
+      background: black;
+      color: limegreen;
       text-align: center;
     }
 
-    #terminalOutput {
-      font-size: 13px;
-      color: white;
+    #response {
       margin-top: 10px;
-      white-space: pre-wrap;
-      text-align: left;
-      background: #1b1b1b;
-      padding: 10px;
-      border-radius: 4px;
-    }
-
-    .output-line {
+      color: limegreen;
       display: flex;
+      justify-content: center;
       align-items: center;
       gap: 8px;
-      margin-top: 6px;
       opacity: 0;
-      animation: fadeSlideIn 0.5s ease forwards;
+      transition: opacity 0.3s ease-in-out;
     }
 
-    .output-line img {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
+    #response img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
     }
 
-    @keyframes fadeSlideIn {
-      0% {
-        opacity: 0;
-        transform: translateX(-10px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateX(0);
-      }
+    #response.show {
+      opacity: 1;
     }
   </style>
 </head>
 <body>
 
-  <div class="center-wrap">
-    <div id="sogHeader" onclick="toggleSog()">Sog Hub</div>
+  <button id="toggleBtn">Sog Hub</button>
 
-    <div id="sogContainer">
-      <div class="panel-content">
-        <div class="command">Sog 1 <div><button class="select-button">Select</button></div></div>
-        <div class="command">Sog 2 <div><button class="select-button">Select</button></div></div>
-        <div class="command">Sog 3 <div><button class="select-button">Select</button></div></div>
+  <div id="sogUI">
+    <button class="sogButton">Sog 1</button>
+    <button class="sogButton">Sog 2</button>
+    <button class="sogButton">Sog 3</button>
 
-        <div id="terminal">
-          <div><strong style="color: white;">Terminal</strong></div>
-          <input id="terminalInput" type="text" placeholder="Type a command..." onkeydown="handleTerminal(event)">
-          <div id="terminalOutput"></div>
-        </div>
+    <div id="terminal">
+      <input type="text" id="terminalInput" placeholder="Type command..." />
+      <div id="response">
+        <span>Command Successful</span>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="success">
       </div>
     </div>
   </div>
 
   <script>
-    const sogContainer = document.getElementById("sogContainer");
+    const toggleBtn = document.getElementById("toggleBtn");
+    const sogUI = document.getElementById("sogUI");
     const terminalInput = document.getElementById("terminalInput");
-    const terminalOutput = document.getElementById("terminalOutput");
+    const response = document.getElementById("response");
 
-    function toggleSog() {
-      sogContainer.classList.toggle("open");
-    }
+    toggleBtn.addEventListener("click", () => {
+      sogUI.classList.toggle("show");
+      response.classList.remove("show");
+      terminalInput.value = "";
+    });
 
-    function handleTerminal(e) {
-      if (e.key === "Enter") {
-        const cmd = terminalInput.value.trim();
-        terminalInput.value = "";
-        if (cmd) {
-          const line = document.createElement("div");
-          line.className = "output-line";
-          line.innerHTML = `
-            <span>> ${cmd} — Command Successful</span>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="icon">
-          `;
-          terminalOutput.appendChild(line);
-          terminalOutput.scrollTop = terminalOutput.scrollHeight;
-        }
+    terminalInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && terminalInput.value.trim() !== "") {
+        response.classList.add("show");
+        setTimeout(() => response.classList.remove("show"), 3000);
       }
-    }
+    });
+
+    // Try to lock scroll when input is focused (helps prevent keyboard push-up)
+    terminalInput.addEventListener("focus", () => {
+      window.scrollTo(0, 0);
+      document.body.style.position = "fixed";
+    });
+    terminalInput.addEventListener("blur", () => {
+      document.body.style.position = "";
+    });
   </script>
 
 </body>
