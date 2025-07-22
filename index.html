@@ -24,12 +24,13 @@
     #sogHeader {
       background-color: #1f1f1f;
       padding: 10px 20px;
-      border-radius: 12px 12px 0 0;
+      border-radius: 12px;
       border: 2px solid #2b2b2b;
-      border-bottom: none;
       color: white;
       font-size: 24px;
+      cursor: pointer;
       box-shadow: 0 0 10px rgba(0,255,0,0.4);
+      transition: all 0.2s ease;
     }
 
     #sogPanel {
@@ -39,7 +40,8 @@
       padding: 20px;
       width: 360px;
       box-shadow: 0 0 20px rgba(0,255,0,0.3);
-      animation: slideIn 0.4s ease-out;
+      display: none;
+      animation: slideIn 0.3s ease-out;
     }
 
     @keyframes slideIn {
@@ -89,13 +91,12 @@
       background: #00ff00;
       color: black;
     }
-
   </style>
 </head>
 <body>
 
   <div class="center-wrap">
-    <div id="sogHeader">Sog Hub</div>
+    <div id="sogHeader" onclick="togglePanel()">Sog Hub</div>
     <div id="sogPanel">
       <h3>Pick Sog</h3>
       <div class="button-grid">
@@ -114,6 +115,16 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const sogPanel = document.getElementById("sogPanel");
+    let isOpen = false;
+
+    function togglePanel() {
+      isOpen = !isOpen;
+      sogPanel.style.display = isOpen ? "block" : "none";
+    }
+  </script>
 
 </body>
 </html>
