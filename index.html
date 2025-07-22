@@ -6,7 +6,7 @@
   <style>
     body {
       margin: 0;
-      background: #00FF00; /* Chroma key green */
+      background: #00FF00; /* Chroma key green for OBS */
       font-family: "Consolas", monospace;
       user-select: none;
     }
@@ -23,9 +23,9 @@
     #sogContainer {
       background-color: #1e1e1e;
       color: white;
-      width: 400px;
+      width: 420px;
       border-radius: 10px;
-      box-shadow: 0 0 20px lime;
+      box-shadow: 0 0 20px white;
       overflow: hidden;
       transition: all 0.3s ease;
       opacity: 0;
@@ -46,7 +46,9 @@
       font-weight: bold;
       border-bottom: 1px solid #333;
       cursor: pointer;
-      color: lime;
+      color: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px white;
     }
 
     .panel-content {
@@ -68,12 +70,12 @@
     .command {
       background: #2a2a2a;
       padding: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       border-radius: 6px;
     }
 
     .select-button {
-      background: lime;
+      background: white;
       border: none;
       color: black;
       font-weight: bold;
@@ -81,39 +83,45 @@
       border-radius: 5px;
       margin-top: 8px;
       cursor: pointer;
-      box-shadow: 0 0 5px lime;
+      box-shadow: 0 0 5px white;
     }
 
     .select-button:hover {
-      background: white;
+      background: #ddd;
     }
 
     #terminal {
-      margin-top: 20px;
+      margin-top: 24px;
       background: #000;
-      border: 1px solid lime;
-      padding: 10px;
-      border-radius: 5px;
-      text-align: left;
+      border: 1px solid white;
+      padding: 14px;
+      border-radius: 6px;
+      text-align: center;
     }
 
     #terminalInput {
-      width: 100%;
+      width: 90%;
       background: #111;
       border: none;
       outline: none;
-      color: lime;
+      color: white;
       font-family: inherit;
-      padding: 6px;
+      padding: 8px;
       font-size: 14px;
       border-radius: 4px;
+      margin-top: 10px;
+      text-align: center;
     }
 
     #terminalOutput {
       font-size: 13px;
       color: white;
-      margin-top: 6px;
+      margin-top: 10px;
       white-space: pre-wrap;
+      text-align: left;
+      background: #1b1b1b;
+      padding: 10px;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -129,7 +137,7 @@
         <div class="command">Sog 3 <div><button class="select-button">Select</button></div></div>
 
         <div id="terminal">
-          <div><strong style="color: lime;">Terminal</strong></div>
+          <div><strong style="color: white;">Terminal</strong></div>
           <input id="terminalInput" type="text" placeholder="Type a command..." onkeydown="handleTerminal(event)">
           <div id="terminalOutput"></div>
         </div>
@@ -151,7 +159,7 @@
         const cmd = terminalInput.value.trim();
         terminalInput.value = "";
         if (cmd) {
-          terminalOutput.innerText += `> ${cmd}\nFake command executed.\n`;
+          terminalOutput.innerText += `> ${cmd}\nFake command executed.\n\n`;
           terminalOutput.scrollTop = terminalOutput.scrollHeight;
         }
       }
