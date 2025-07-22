@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Sog Hub</title>
   <style>
     body {
       margin: 0;
-      background: #00FF00; /* Chroma key green for OBS */
+      background: #00FF00; /* Green screen for chroma key */
       font-family: "Consolas", monospace;
       user-select: none;
     }
@@ -123,6 +123,32 @@
       padding: 10px;
       border-radius: 4px;
     }
+
+    .output-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      opacity: 0;
+      animation: fadeSlideIn 0.5s ease forwards;
+    }
+
+    .output-line img {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+    }
+
+    @keyframes fadeSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
   </style>
 </head>
 <body>
@@ -159,7 +185,13 @@
         const cmd = terminalInput.value.trim();
         terminalInput.value = "";
         if (cmd) {
-          terminalOutput.innerText += `> ${cmd}\nFake command executed.\n\n`;
+          const line = document.createElement("div");
+          line.className = "output-line";
+          line.innerHTML = `
+            <span>> ${cmd} — Command Successful</span>
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="icon">
+          `;
+          terminalOutput.appendChild(line);
           terminalOutput.scrollTop = terminalOutput.scrollHeight;
         }
       }
