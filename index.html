@@ -1,107 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Sog Hub</title>
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
+      font-family: monospace;
+    }
+
+    body {
       margin: 0;
       padding: 0;
-      background: transparent;
+      background-color: black;
+      color: white;
       overflow: hidden;
-      height: 100%;
-      position: fixed;
-      font-family: monospace;
     }
 
     #toggleBtn {
       position: absolute;
       top: 20px;
       left: 20px;
-      background: limegreen;
-      color: black;
-      padding: 10px 20px;
+      background-color: black;
+      color: white;
       border: 2px solid white;
+      padding: 10px 20px;
       cursor: pointer;
-      border-radius: 6px;
-      transition: transform 0.2s ease;
-    }
-    #toggleBtn:hover {
-      transform: scale(1.05);
+      transition: all 0.3s ease-in-out;
     }
 
     #sogUI {
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 320px;
-      background: black;
+      transform: translate(-50%, -50%) scale(0.8);
+      width: 400px;
+      background-color: black;
       border: 2px solid white;
-      border-radius: 10px;
       padding: 20px;
-      box-shadow: 0 0 20px limegreen;
-      transform: translate(-50%, -50%) scale(0);
       opacity: 0;
-      transition: all 0.4s ease;
+      pointer-events: none;
+      transition: all 0.5s ease-in-out;
     }
 
-    #sogUI.show {
-      transform: translate(-50%, -50%) scale(1);
+    #sogUI.open {
       opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: all;
     }
 
-    .sogButton {
-      display: block;
-      width: 100%;
-      margin: 8px 0;
+    .sogBtn {
+      background-color: black;
+      color: white;
+      border: 1px solid white;
       padding: 10px;
-      background: limegreen;
-      color: black;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
+      margin: 5px 0;
+      width: 100%;
       cursor: pointer;
-      transition: transform 0.2s ease;
+      transition: background 0.2s ease-in-out;
     }
 
-    .sogButton:hover {
-      transform: scale(1.05);
+    .sogBtn:hover {
+      background-color: white;
+      color: black;
     }
 
-    #terminal {
+    #commandArea {
       margin-top: 15px;
+      border: 1px solid white;
+      padding: 10px;
       text-align: center;
     }
 
-    #terminalInput {
-      width: 80%;
-      padding: 8px;
-      border: 2px solid white;
-      border-radius: 4px;
-      background: black;
-      color: limegreen;
+    #commandInput {
+      width: 90%;
+      padding: 5px;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid white;
+      color: #00ff00;
       text-align: center;
+      outline: none;
     }
 
-    #response {
+    #statusMsg {
       margin-top: 10px;
-      color: limegreen;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      color: #00ff00;
+      font-size: 14px;
       opacity: 0;
-      transition: opacity 0.3s ease-in-out;
+      transition: all 0.4s ease-in-out;
     }
 
-    #response img {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+    #statusMsg img {
+      margin-left: 6px;
+      width: 18px;
+      height: 18px;
+      transition: all 0.4s ease-in-out;
     }
 
-    #response.show {
+    #statusMsg.show {
       opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
@@ -110,15 +112,15 @@
   <button id="toggleBtn">Sog Hub</button>
 
   <div id="sogUI">
-    <button class="sogButton">Sog 1</button>
-    <button class="sogButton">Sog 2</button>
-    <button class="sogButton">Sog 3</button>
+    <button class="sogBtn">Sog 1</button>
+    <button class="sogBtn">Sog 2</button>
+    <button class="sogBtn">Sog 3</button>
 
-    <div id="terminal">
-      <input type="text" id="terminalInput" placeholder="Type command..." />
-      <div id="response">
-        <span>Command Successful</span>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="success">
+    <div id="commandArea">
+      <input type="text" id="commandInput" placeholder="Enter command..." />
+      <div id="statusMsg">
+        Command Successful
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" />
       </div>
     </div>
   </div>
@@ -126,31 +128,25 @@
   <script>
     const toggleBtn = document.getElementById("toggleBtn");
     const sogUI = document.getElementById("sogUI");
-    const terminalInput = document.getElementById("terminalInput");
-    const response = document.getElementById("response");
+    const commandInput = document.getElementById("commandInput");
+    const statusMsg = document.getElementById("statusMsg");
 
-    toggleBtn.addEventListener("click", () => {
-      sogUI.classList.toggle("show");
-      response.classList.remove("show");
-      terminalInput.value = "";
-    });
+    let isOpen = false;
 
-    terminalInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && terminalInput.value.trim() !== "") {
-        response.classList.add("show");
-        setTimeout(() => response.classList.remove("show"), 3000);
+    toggleBtn.onclick = () => {
+      isOpen = !isOpen;
+      sogUI.classList.toggle("open", isOpen);
+    };
+
+    commandInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        statusMsg.classList.add("show");
+        setTimeout(() => {
+          statusMsg.classList.remove("show");
+        }, 2000);
+        commandInput.value = "";
       }
     });
-
-    // Try to lock scroll when input is focused (helps prevent keyboard push-up)
-    terminalInput.addEventListener("focus", () => {
-      window.scrollTo(0, 0);
-      document.body.style.position = "fixed";
-    });
-    terminalInput.addEventListener("blur", () => {
-      document.body.style.position = "";
-    });
   </script>
-
 </body>
 </html>
