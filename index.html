@@ -7,177 +7,224 @@
   <style>
     * {
       box-sizing: border-box;
-      transition: all 0.3s ease;
-    }
-    body {
       margin: 0;
-      background-color: #1e1e1e;
-      font-family: 'Segoe UI', sans-serif;
-      color: white;
+      padding: 0;
+      font-family: 'Consolas', monospace;
+    }
+
+    body {
+      background-color: limegreen; /* For chroma key */
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
-    #sogHub {
+
+    .soghub {
       width: 400px;
       height: 500px;
-      border: 3px solid #111;
-      border-radius: 25px;
       background-color: #2b2b2b;
+      border: 4px solid #111;
+      border-radius: 20px;
       padding: 20px;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      gap: 10px;
       position: relative;
     }
+
     .tabs {
       display: flex;
       justify-content: space-around;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
+
     .tab {
+      background-color: #3b3b3b;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      cursor: pointer;
-      padding: 10px;
-      border-radius: 10px;
+      gap: 5px;
     }
+
     .tab img {
-      width: 20px;
-      margin-right: 10px;
+      width: 18px;
+      height: 18px;
     }
+
+    .tab:hover {
+      background-color: #555;
+    }
+
     .section {
-      flex-grow: 1;
+      flex: 1;
+      background-color: #3b3b3b;
+      border-radius: 10px;
+      padding: 10px;
       display: none;
       flex-direction: column;
+      overflow-y: auto;
     }
+
     .section.active {
       display: flex;
+      animation: fadeIn 0.3s ease-in-out;
     }
-    #executor textarea {
-      width: 100%;
-      height: 120px;
-      padding: 10px;
-      border-radius: 10px;
-      background-color: #3a3a3a;
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .executor-input {
+      flex: 1;
+      background-color: #222;
       border: none;
-      color: #fff;
-      font-size: 14px;
-      font-family: 'Courier New', monospace;
+      padding: 10px;
+      color: #0f0;
       resize: none;
+      border-radius: 10px;
     }
-    #output {
+
+    .output-area {
       margin-top: 10px;
-      font-family: 'Segoe UI', sans-serif;
-      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
-    .success {
+
+    .success-message {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-top: 5px;
-      animation: fadeIn 0.3s ease;
-    }
-    .success img {
-      width: 20px;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    #saves .slot {
-      background-color: #3a3a3a;
-      margin-bottom: 10px;
-      padding: 10px;
-      border-radius: 10px;
-    }
-    #search input {
-      width: 100%;
-      padding: 10px;
-      border-radius: 25px;
-      border: none;
-      background-color: #3a3a3a;
       color: white;
-      margin-bottom: 10px;
+      animation: fadeIn 0.3s ease-in-out;
     }
-    #resultBox {
-      display: none;
-      background-color: #3a3a3a;
-      border-radius: 15px;
+
+    .success-message img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .save-slot {
+      background-color: #464646;
       padding: 10px;
-      animation: fadeIn 0.3s ease;
-    }
-    #resultBox img {
-      width: 100%;
+      margin-bottom: 5px;
       border-radius: 10px;
-    }
-    #resultBox p {
-      margin-top: 5px;
+      color: white;
       text-align: center;
-      font-size: 12px;
+    }
+
+    .search-bar {
+      background-color: #464646;
+      padding: 10px;
+      border-radius: 10px;
+      color: white;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-bar input {
+      background: transparent;
+      border: none;
+      color: white;
+      flex: 1;
+      outline: none;
+    }
+
+    .search-result {
+      background-color: #333;
+      border-radius: 10px;
+      margin-top: 10px;
+      padding: 10px;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .search-result img {
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+    }
+
+    .search-result span {
+      color: white;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div id="sogHub">
+  <div class="soghub">
     <div class="tabs">
-      <div class="tab" onclick="showSection('executor')">
+      <button class="tab" onclick="showSection('execute')">
         <img src="https://cdn-icons-png.flaticon.com/256/764/764599.png" /> Execute
-      </div>
-      <div class="tab" onclick="showSection('saves')">
+      </button>
+      <button class="tab" onclick="showSection('saves')">
         <img src="https://static.thenounproject.com/png/2890596-200.png" /> Saves
-      </div>
-      <div class="tab" onclick="showSection('search')">
+      </button>
+      <button class="tab" onclick="showSection('search')">
         <img src="https://img.icons8.com/?size=512&id=132&format=png" /> Search
-      </div>
+      </button>
     </div>
-    <div id="executor" class="section active">
-      <textarea placeholder="Enter your command here..." onkeydown="if(event.key==='Enter'){executeCommand(event)}"></textarea>
-      <div id="output"></div>
+
+    <div id="execute" class="section active">
+      <textarea class="executor-input" id="executorInput" placeholder="Type a command..."></textarea>
+      <div class="output-area" id="outputArea"></div>
     </div>
+
     <div id="saves" class="section">
-      <div class="slot">Save 1</div>
-      <div class="slot">Save 2</div>
-      <div class="slot">Save 3</div>
+      <div class="save-slot">Save Slot 1</div>
+      <div class="save-slot">Save Slot 2</div>
+      <div class="save-slot">Save Slot 3</div>
     </div>
+
     <div id="search" class="section">
-      <input type="text" id="searchBar" placeholder="Search..." onkeydown="if(event.key==='Enter'){searchItem()}" />
-      <div id="resultBox">
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search..." onkeydown="if(event.key==='Enter') searchIt()" />
+        <img src="https://img.icons8.com/?size=512&id=132&format=png" width="20" />
+      </div>
+      <div class="search-result" id="searchResult">
         <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10" />
-        <p>Slap Battles</p>
+        <span>Slap Battles</span>
       </div>
     </div>
   </div>
+
   <script>
     function showSection(id) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(id).classList.add('active');
     }
 
-    function executeCommand(event) {
-      event.preventDefault();
-      const text = event.target.value.trim();
-      if (text !== '') {
-        const output = document.getElementById("output");
-        const successMsg = document.createElement("div");
-        successMsg.className = "success";
-        successMsg.innerHTML = `
+    document.getElementById("executorInput").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const output = document.createElement("div");
+        output.className = "success-message";
+        output.innerHTML = `
           <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" />
-          <span style="font-family:'Segoe UI Semibold'; color:#98ff98;">Command Successful</span>
+          <span>Command Successful</span>
         `;
-        output.appendChild(successMsg);
-        event.target.value = '';
+        document.getElementById("outputArea").appendChild(output);
+        document.getElementById("executorInput").value = "";
       }
-    }
+    });
 
-    function searchItem() {
-      const input = document.getElementById("searchBar").value.toLowerCase();
-      const box = document.getElementById("resultBox");
-      if (input.includes("slap battles")) {
-        box.style.display = 'block';
+    function searchIt() {
+      const val = document.getElementById("searchInput").value.toLowerCase();
+      const result = document.getElementById("searchResult");
+      if (val === "slap battles") {
+        result.style.display = "flex";
       } else {
-        box.style.display = 'none';
+        result.style.display = "none";
       }
     }
   </script>
