@@ -1,54 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sog Hub</title>
   <style>
     * {
       box-sizing: border-box;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
-      background-color: #1a1a1a;
+      background: #1a1a1a;
+      color: white;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      overflow: hidden;
     }
 
-    .sog-hub {
+    .soghub {
+      background-color: #2a2a2a;
+      border: 2px solid #0a0a0a;
+      border-radius: 20px;
       width: 500px;
-      background: #2a2a2a;
-      border: 2px solid #0d0d0d;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
-      transition: all 0.5s ease-in-out;
+      height: 600px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
     .tabs {
       display: flex;
       justify-content: space-around;
-      background: #2a2a2a;
-      padding: 12px;
-      border-bottom: 2px solid #0d0d0d;
+      margin-bottom: 15px;
     }
 
     .tab {
-      flex: 1;
-      text-align: center;
-      padding: 10px 0;
-      cursor: pointer;
-      color: white;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
+      gap: 6px;
+      cursor: pointer;
+      padding: 10px 15px;
+      background: #333;
+      border-radius: 12px;
       transition: all 0.3s ease;
+    }
+
+    .tab:hover {
+      background: #444;
     }
 
     .tab img {
@@ -56,77 +59,76 @@
       height: 20px;
     }
 
-    .tab:hover {
-      background: #333;
-    }
-
-    .tab-content {
+    .section {
+      flex-grow: 1;
+      background: #3a3a3a;
+      border-radius: 15px;
+      padding: 15px;
       display: none;
-      padding: 20px;
-      animation: fadeIn 0.5s ease;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .tab-content.active {
-      display: block;
+    .section.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-in-out;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
     }
 
-    .executor-box {
-      background: #3a3a3a;
-      border: 1px solid #0d0d0d;
-      border-radius: 8px;
+    .terminal {
+      background: #222;
       padding: 10px;
-      color: #fff;
-      height: 150px;
-      width: 100%;
-      resize: none;
+      border-radius: 10px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
     }
 
-    .response {
-      margin-top: 10px;
+    .terminal input {
+      padding: 10px;
+      border: none;
+      outline: none;
+      background: #111;
+      color: lime;
+      border-radius: 8px;
+      margin-top: auto;
+    }
+
+    .success-message {
       display: flex;
       align-items: center;
       gap: 10px;
-      color: limegreen;
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
     }
 
-    .response img {
-      width: 24px;
-      height: 24px;
-      animation: fadeIn 0.4s ease;
+    .success-message.visible {
+      opacity: 1;
     }
 
-    .saves-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+    .success-message img {
+      width: 30px;
+      height: 30px;
     }
 
-    .save-box {
-      background: #373737;
+    .save-slot {
+      background: #444;
+      padding: 10px;
       border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-      color: white;
       cursor: pointer;
-      transition: 0.3s ease;
-    }
-
-    .save-box:hover {
-      background: #4a4a4a;
     }
 
     .search-bar {
       display: flex;
       align-items: center;
-      background: #3a3a3a;
-      border-radius: 30px;
-      padding: 8px 15px;
-      border: 1px solid #0d0d0d;
+      background: #444;
+      border-radius: 20px;
+      padding: 10px;
     }
 
     .search-bar input {
@@ -134,103 +136,111 @@
       border: none;
       outline: none;
       color: white;
-      flex: 1;
-    }
-
-    .search-bar img {
-      width: 20px;
-      height: 20px;
+      margin-left: 10px;
+      flex-grow: 1;
     }
 
     .search-result {
-      margin-top: 15px;
-      background: #2a2a2a;
-      border: 1px solid #0d0d0d;
-      border-radius: 10px;
+      background: #555;
+      border-radius: 15px;
       display: flex;
+      margin-top: 15px;
       overflow: hidden;
-      width: 100%;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.4s ease-in-out;
+    }
+
+    .search-result.visible {
+      opacity: 1;
+      transform: scale(1);
     }
 
     .search-result img {
-      width: 40%;
-      object-fit: cover;
+      width: 80%;
     }
 
-    .search-result .info {
+    .search-result .text {
       padding: 10px;
-      color: white;
+      width: 20%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <div class="sog-hub">
+  <div class="soghub">
     <div class="tabs">
-      <div class="tab" onclick="showTab('execute')">
-        <img src="https://cdn-icons-png.flaticon.com/256/764/764599.png">
+      <div class="tab" onclick="showSection('execute')">
+        <img src="https://cdn-icons-png.flaticon.com/256/764/764599.png" alt="Execute">
         Execute
       </div>
-      <div class="tab" onclick="showTab('saves')">
-        <img src="https://static.thenounproject.com/png/2890596-200.png">
+      <div class="tab" onclick="showSection('saves')">
+        <img src="https://static.thenounproject.com/png/2890596-200.png" alt="Saves">
         Saves
       </div>
-      <div class="tab" onclick="showTab('search')">
-        <img src="https://img.icons8.com/?size=512&id=132&format=png">
+      <div class="tab" onclick="showSection('search')">
+        <img src="https://img.icons8.com/?size=512&id=132&format=png" alt="Search">
         Search
       </div>
     </div>
 
-    <div class="tab-content" id="execute">
-      <textarea class="executor-box" placeholder="Type your command here..."></textarea>
-      <div class="response">
-        <span>Command Successful</span>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10">
-      </div>
-    </div>
-
-    <div class="tab-content" id="saves">
-      <div class="saves-grid">
-        <div class="save-box">Save 1</div>
-        <div class="save-box">Save 2</div>
-        <div class="save-box">Save 3</div>
-        <div class="save-box">Save 4</div>
-      </div>
-    </div>
-
-    <div class="tab-content" id="search">
-      <div class="search-bar">
-        <input type="text" placeholder="Search something..." id="searchInput" oninput="handleSearch(this.value)">
-        <img src="https://img.icons8.com/?size=512&id=132&format=png">
-      </div>
-      <div class="search-result" id="searchResult" style="display: none;">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10">
-        <div class="info">
-          <strong>Slap Battles</strong><br>
-          A chaotic Roblox game where slaps are power!
+    <div class="section" id="execute">
+      <div class="terminal">
+        <input type="text" id="commandInput" placeholder="Type a command and press Enter...">
+        <div class="success-message" id="successMsg">
+          <span>Command Successful</span>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" alt="Cat">
         </div>
+      </div>
+    </div>
+
+    <div class="section" id="saves">
+      <div class="save-slot">Save Slot 1</div>
+      <div class="save-slot">Save Slot 2</div>
+      <div class="save-slot">Save Slot 3</div>
+    </div>
+
+    <div class="section" id="search">
+      <div class="search-bar">
+        <img src="https://img.icons8.com/?size=512&id=132&format=png" alt="Search" width="20">
+        <input type="text" id="searchInput" placeholder="Search...">
+      </div>
+      <div class="search-result" id="searchResult">
+        <div class="text">Slap Battles</div>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10" alt="Slap Battles">
       </div>
     </div>
   </div>
 
   <script>
-    function showTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      document.getElementById(tabId).classList.add('active');
+    function showSection(id) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
     }
 
-    function handleSearch(value) {
-      const result = document.getElementById('searchResult');
-      if (value.toLowerCase() === 'slap battles') {
-        result.style.display = 'flex';
-      } else {
-        result.style.display = 'none';
+    document.getElementById('commandInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const val = this.value.trim();
+        if (val !== '') {
+          const msg = document.getElementById('successMsg');
+          msg.classList.add('visible');
+          setTimeout(() => msg.classList.remove('visible'), 3000);
+          this.value = '';
+        }
       }
-    }
+    });
 
-    // Default tab
-    showTab('execute');
+    document.getElementById('searchInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        if (this.value.trim().toLowerCase() === 'slap battles') {
+          const sr = document.getElementById('searchResult');
+          sr.classList.add('visible');
+        }
+      }
+    });
   </script>
 </body>
 </html>
