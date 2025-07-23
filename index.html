@@ -1,197 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sog Hub</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: Consolas, monospace;
+    }
+
     body {
       margin: 0;
-      background-color: #00FF00; /* Chroma key green */
-      font-family: Arial, sans-serif;
+      background-color: #00ff00; /* Chroma key green */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
-    .main {
-      width: 400px;
-      height: 500px;
-      border-radius: 15px;
-      background-color: #2a2a2a;
-      border: 2px solid #111;
-      margin: 40px auto;
-      padding: 15px;
-      box-sizing: border-box;
+
+    .hub {
+      width: 600px;
+      height: 450px;
+      border: 4px solid #111;
+      border-radius: 20px;
+      background-color: #2e2e2e;
+      padding: 20px;
+      color: white;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
+      justify-content: space-between;
     }
+
     .tabs {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
+      gap: 10px;
     }
+
     .tab {
       flex: 1;
+      background-color: #3e3e3e;
+      border: 2px solid #111;
       padding: 10px;
       text-align: center;
-      background-color: #3a3a3a;
-      border-radius: 10px;
-      color: white;
       cursor: pointer;
-      margin: 0 5px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+      border-radius: 10px;
       transition: all 0.3s ease;
     }
-    .tab:hover {
-      background-color: #4a4a4a;
+
+    .tab.active {
+      background-color: #555;
     }
+
     .content {
       flex: 1;
-      overflow-y: auto;
+      margin-top: 20px;
     }
-    .section {
+
+    .hidden {
       display: none;
-      animation: fadeIn 0.4s ease-in-out;
     }
-    .section.active {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(10px);}
-      to {opacity: 1; transform: translateY(0);}
-    }
-    .executor-input {
+
+    .save-slot {
       width: 100%;
-      height: 200px;
-      background-color: #333;
-      color: white;
-      border: none;
-      border-radius: 10px;
+      background-color: #404040;
+      border: 1px solid #111;
       padding: 10px;
-      resize: none;
-      font-family: monospace;
-      font-size: 14px;
-      line-height: 1.4;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
-    .output-message {
-      margin-top: 10px;
-      font-size: 14px;
-      font-family: 'Courier New', Courier, monospace;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      animation: fadeIn 0.3s ease-in-out;
-    }
-    .output-message img {
-      width: 20px;
-      height: 20px;
-    }
-    .saves .slot {
-      background-color: #3b3b3b;
-      border-radius: 10px;
-      margin: 10px 0;
-      padding: 10px;
-      color: white;
-    }
-    .search input {
+
+    .search-bar {
       width: 100%;
       padding: 10px;
-      border-radius: 20px;
-      border: none;
-      background-color: #3b3b3b;
+      border-radius: 8px;
+      border: 2px solid #111;
+      background-color: #404040;
       color: white;
-      font-size: 14px;
+      margin-bottom: 10px;
     }
+
     .search-result {
-      margin-top: 10px;
-      background-color: #3b3b3b;
-      border-radius: 10px;
+      width: 100%;
+      background-color: #3c3c3c;
+      border-radius: 12px;
       padding: 10px;
       display: flex;
       gap: 10px;
       align-items: center;
-      animation: fadeIn 0.4s ease-in-out;
+      animation: fadein 0.5s ease-in-out;
     }
+
     .search-result img {
       width: 60px;
       height: 60px;
-      border-radius: 5px;
+      border-radius: 8px;
     }
-    .search-result span {
+
+    .terminal-box {
+      width: 100%;
+      height: 180px;
+      background-color: #1f1f1f;
+      border: 2px solid #111;
+      border-radius: 10px;
+      padding: 10px;
       color: white;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      margin-bottom: 10px;
+    }
+
+    .terminal-input {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 2px solid #111;
+      background-color: #2a2a2a;
+      color: white;
+    }
+
+    .command-output {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: fadein 0.5s ease-in-out;
+      margin-top: 5px;
+    }
+
+    .command-output img {
+      width: 20px;
+      height: 20px;
+    }
+
+    @keyframes fadein {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="main">
+  <div class="hub">
     <div class="tabs">
-      <div class="tab" data-tab="executor"><img src="https://cdn-icons-png.flaticon.com/256/764/764599.png" width="20"> Execute</div>
-      <div class="tab" data-tab="saves"><img src="https://static.thenounproject.com/png/2890596-200.png" width="20"> Saves</div>
-      <div class="tab" data-tab="search"><img src="https://img.icons8.com/?size=512&id=132&format=png" width="20"> Search</div>
+      <div class="tab active" onclick="switchTab('execute')">
+        <img src="https://cdn-icons-png.flaticon.com/256/764/764599.png" width="20" /> Execute
+      </div>
+      <div class="tab" onclick="switchTab('saves')">
+        <img src="https://static.thenounproject.com/png/2890596-200.png" width="20" /> Saves
+      </div>
+      <div class="tab" onclick="switchTab('search')">
+        <img src="https://img.icons8.com/?size=512&id=132&format=png" width="20" /> Search
+      </div>
     </div>
-
     <div class="content">
-      <div id="executor" class="section active">
-        <textarea class="executor-input" placeholder="Type command..."></textarea>
-        <div id="executor-output"></div>
+      <div id="execute" class="tab-content">
+        <div id="terminal" class="terminal-box"></div>
+        <input id="commandInput" class="terminal-input" type="text" placeholder="Enter command..." onkeydown="handleCommand(event)" />
       </div>
-      <div id="saves" class="section saves">
-        <div class="slot">Save 1</div>
-        <div class="slot">Save 2</div>
-        <div class="slot">Save 3</div>
+      <div id="saves" class="tab-content hidden">
+        <div class="save-slot">Save Slot 1</div>
+        <div class="save-slot">Save Slot 2</div>
+        <div class="save-slot">Save Slot 3</div>
       </div>
-      <div id="search" class="section search">
-        <input type="text" id="search-bar" placeholder="Search...">
-        <div id="search-result"></div>
+      <div id="search" class="tab-content hidden">
+        <input id="searchInput" class="search-bar" type="text" placeholder="Search something..." onkeydown="handleSearch(event)" />
+        <div id="searchResults"></div>
       </div>
     </div>
   </div>
 
   <script>
-    const tabs = document.querySelectorAll('.tab');
-    const sections = document.querySelectorAll('.section');
-    const output = document.getElementById('executor-output');
-    const input = document.querySelector('.executor-input');
-    const searchBar = document.getElementById('search-bar');
-    const searchResult = document.getElementById('search-result');
+    function switchTab(tabId) {
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      event.target.closest(".tab").classList.add("active");
+      document.querySelectorAll(".tab-content").forEach(c => c.classList.add("hidden"));
+      document.getElementById(tabId).classList.remove("hidden");
+    }
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const target = tab.dataset.tab;
-        sections.forEach(sec => sec.classList.remove('active'));
-        document.getElementById(target).classList.add('active');
-      });
-    });
+    function getRandomColor() {
+      const colors = ['#00ccff', '#ffffff', '#ff4d4d'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
 
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        const colors = ['#00FFFF', '#FFFFFF', '#FF5555'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const msg = document.createElement('div');
-        msg.className = 'output-message';
-        msg.innerHTML = `<span style="color: ${color}; font-weight: bold">Command Successful</span> <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10">`;
-        output.appendChild(msg);
-        input.value = '';
+    function handleCommand(e) {
+      if (e.key === "Enter") {
+        const val = e.target.value;
+        if (!val) return;
+        const terminal = document.getElementById("terminal");
+        const color = getRandomColor();
+
+        const commandDiv = document.createElement("div");
+        commandDiv.innerHTML = `<span style='color: ${color}'>${val}</span>`;
+        terminal.appendChild(commandDiv);
+
+        const output = document.createElement("div");
+        output.className = "command-output";
+        output.innerHTML = `
+          <span style='font-family: Arial; color: #90ee90;'>Command Successful</span>
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10" />
+        `;
+        terminal.appendChild(output);
+
+        terminal.scrollTop = terminal.scrollHeight;
+        e.target.value = "";
       }
-    });
+    }
 
-    searchBar.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        const val = searchBar.value.toLowerCase();
-        if (val.includes('slap battles')) {
-          searchResult.innerHTML = `
-            <div class="search-result">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10">
-              <span>Slap Battles</span>
-            </div>`;
-        } else {
-          searchResult.innerHTML = '';
+    function handleSearch(e) {
+      if (e.key === "Enter") {
+        const val = e.target.value.trim().toLowerCase();
+        const container = document.getElementById("searchResults");
+        container.innerHTML = "";
+        if (val === "slap battles") {
+          const result = document.createElement("div");
+          result.className = "search-result";
+          result.innerHTML = `
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10" />
+            <div><strong>Slap Battles</strong><br/>Funny slapping game with abilities</div>
+          `;
+          container.appendChild(result);
         }
       }
-    });
+    }
   </script>
 </body>
 </html>
