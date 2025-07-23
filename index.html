@@ -3,172 +3,234 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NeoHub</title>
+  <title>Sog Hub</title>
   <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
     body {
       margin: 0;
-      padding: 0;
-      background: linear-gradient(145deg, #121212, #1e1e1e);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: white;
+      background-color: #1a1a1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       overflow: hidden;
     }
 
-    .container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 440px;
-      background-color: #222;
+    .sog-hub {
+      width: 500px;
+      background: #2a2a2a;
+      border: 2px solid #0d0d0d;
       border-radius: 12px;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
       overflow: hidden;
-      animation: fadeIn 0.8s ease-out;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      transition: all 0.5s ease-in-out;
     }
 
-    .header {
-      padding: 16px;
-      background-color: #333;
-      font-size: 24px;
-      font-weight: bold;
+    .tabs {
+      display: flex;
+      justify-content: space-around;
+      background: #2a2a2a;
+      padding: 12px;
+      border-bottom: 2px solid #0d0d0d;
+    }
+
+    .tab {
+      flex: 1;
       text-align: center;
-      border-bottom: 1px solid #444;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-    }
-
-    .content {
-      padding: 20px;
-    }
-
-    .block {
-      margin-bottom: 16px;
-      background: #2c2c2c;
-      padding: 14px;
-      border-radius: 8px;
-      transition: background 0.3s ease;
-    }
-
-    .block:hover {
-      background: #3a3a3a;
-    }
-
-    .block-title {
-      font-size: 18px;
-      margin-bottom: 8px;
-    }
-
-    .block-btn {
-      padding: 8px 16px;
-      background: #00ffaa;
-      border: none;
-      border-radius: 6px;
+      padding: 10px 0;
       cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
-
-    .block-btn:hover {
-      background: #00dd99;
-    }
-
-    .tools {
-      margin-top: 28px;
-    }
-
-    .tool-input {
-      width: 100%;
-      padding: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #111;
       color: white;
-      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
     }
 
-    .live-clock {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 16px;
-      color: #888;
+    .tab img {
+      width: 20px;
+      height: 20px;
     }
 
-    .notepad {
-      margin-top: 20px;
-      background: #1a1a1a;
-      padding: 10px;
-      border-radius: 6px;
+    .tab:hover {
+      background: #333;
     }
 
-    .notepad textarea {
-      width: 100%;
-      height: 100px;
-      background: transparent;
-      border: none;
-      resize: none;
-      color: #fff;
-      font-family: monospace;
+    .tab-content {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .tab-content.active {
+      display: block;
     }
 
     @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .executor-box {
+      background: #3a3a3a;
+      border: 1px solid #0d0d0d;
+      border-radius: 8px;
+      padding: 10px;
+      color: #fff;
+      height: 150px;
+      width: 100%;
+      resize: none;
+    }
+
+    .response {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: limegreen;
+    }
+
+    .response img {
+      width: 24px;
+      height: 24px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .saves-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .save-box {
+      background: #373737;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .save-box:hover {
+      background: #4a4a4a;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #3a3a3a;
+      border-radius: 30px;
+      padding: 8px 15px;
+      border: 1px solid #0d0d0d;
+    }
+
+    .search-bar input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: white;
+      flex: 1;
+    }
+
+    .search-bar img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .search-result {
+      margin-top: 15px;
+      background: #2a2a2a;
+      border: 1px solid #0d0d0d;
+      border-radius: 10px;
+      display: flex;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .search-result img {
+      width: 40%;
+      object-fit: cover;
+    }
+
+    .search-result .info {
+      padding: 10px;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">NeoHub Panel</div>
-    <div class="content">
-      <div class="block">
-        <div class="block-title">Quick Access Tool 1</div>
-        <button class="block-btn">Launch</button>
+  <div class="sog-hub">
+    <div class="tabs">
+      <div class="tab" onclick="showTab('execute')">
+        <img src="https://cdn-icons-png.flaticon.com/256/764/764599.png">
+        Execute
       </div>
-      <div class="block">
-        <div class="block-title">Quick Access Tool 2</div>
-        <button class="block-btn">Launch</button>
+      <div class="tab" onclick="showTab('saves')">
+        <img src="https://static.thenounproject.com/png/2890596-200.png">
+        Saves
       </div>
-      <div class="block">
-        <div class="block-title">Quick Access Tool 3</div>
-        <button class="block-btn">Launch</button>
+      <div class="tab" onclick="showTab('search')">
+        <img src="https://img.icons8.com/?size=512&id=132&format=png">
+        Search
       </div>
+    </div>
 
-      <div class="tools">
-        <input class="tool-input" id="customCommand" type="text" placeholder="Type a command...">
+    <div class="tab-content" id="execute">
+      <textarea class="executor-box" placeholder="Type your command here..."></textarea>
+      <div class="response">
+        <span>Command Successful</span>
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNevaIgsXBAQSW1hDZStzBOxQRqJsLBUOmp6QUgJ5xY5M9-tNcIa1ZEsU&s=10">
       </div>
+    </div>
 
-      <div class="notepad">
-        <div style="margin-bottom: 6px; font-weight: bold;">Notepad</div>
-        <textarea placeholder="Write notes here..."></textarea>
+    <div class="tab-content" id="saves">
+      <div class="saves-grid">
+        <div class="save-box">Save 1</div>
+        <div class="save-box">Save 2</div>
+        <div class="save-box">Save 3</div>
+        <div class="save-box">Save 4</div>
       </div>
+    </div>
 
-      <div class="live-clock" id="clock"></div>
+    <div class="tab-content" id="search">
+      <div class="search-bar">
+        <input type="text" placeholder="Search something..." id="searchInput" oninput="handleSearch(this.value)">
+        <img src="https://img.icons8.com/?size=512&id=132&format=png">
+      </div>
+      <div class="search-result" id="searchResult" style="display: none;">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0ZfWjhRw2R20PEsrsJza9bXq2cSn28Uhj0y5X2VdU-P-8ubjz7MC0XozE&s=10">
+        <div class="info">
+          <strong>Slap Battles</strong><br>
+          A chaotic Roblox game where slaps are power!
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    // Live Clock
-    const clock = document.getElementById("clock");
-    function updateClock() {
-      const now = new Date();
-      clock.textContent = now.toLocaleTimeString();
+    function showTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
     }
-    setInterval(updateClock, 1000);
-    updateClock();
 
-    // Custom command alert
-    document.getElementById("customCommand").addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        alert(`Command \"${this.value}\" executed.`);
-        this.value = "";
+    function handleSearch(value) {
+      const result = document.getElementById('searchResult');
+      if (value.toLowerCase() === 'slap battles') {
+        result.style.display = 'flex';
+      } else {
+        result.style.display = 'none';
       }
-    });
+    }
+
+    // Default tab
+    showTab('execute');
   </script>
 </body>
 </html>
